@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    
+    <!-- Console appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- File appender for extension logs -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/burp2api.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <!-- SizeAndTimeBased: %i (index) and maxFileSize are only valid here, not
+             on a plain TimeBasedRollingPolicy — the previous mismatch made logback
+             reject the policy and silently disable this file appender. -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/burp2api.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- Logger for burp2api Extension.
+         WARN keeps the console quiet by default (warnings + errors only) when
+         Burp is launched from a terminal. Verbose mode (logging.verbose=true /
+         BURP2API_VERBOSE=true / UI toggle) lowers this to DEBUG at runtime via
+         ApiLogger.setVerbose(). -->
+    <logger name="com.burp2api" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+    
+    <!-- Third-party library loggers -->
+    <logger name="io.javalin" level="INFO"/>
+    <logger name="org.eclipse.jetty" level="WARN"/>
+    <logger name="org.sqlite" level="WARN"/>
+    
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    
+</configuration> 
