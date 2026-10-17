@@ -1,0 +1,3553 @@
+{
+  "info": {
+    "description": "REST API extension for Burp Suite Professional that enables programmatic access to proxy traffic, scanner functionality, scope management, and collaborative testing workflows. Features advanced response analysis, real-time proxy interception, and enhanced security testing capabilities using Montoya API 2025.8+.",
+    "title": "burp2api - Burp Suite REST API Extension",
+    "version": "1.1.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/": {
+      "get": {
+        "description": "API information",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "API information",
+        "tags": [
+          "General"
+        ]
+      }
+    },
+    "/auth/cookies": {
+      "get": {
+        "description": "Get cookies for a host or session. When the 'host' query parameter is supplied, the live browser session cookies for that host are reconstructed from captured proxy traffic (Cookie request headers and Set-Cookie responses), including a ready-to-replay 'cookie_header'. Without 'host', returns only cookies injected through this API.",
+        "parameters": [
+          {
+            "description": "Host whose live session cookies to reconstruct from proxy traffic (exact match).",
+            "in": "query",
+            "name": "host",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter API-injected cookies by session tag (ignored when 'host' is set).",
+            "in": "query",
+            "name": "session_tag",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get cookies (live host session or API-injected)",
+        "tags": [
+          "Auth"
+        ]
+      },
+      "post": {
+        "description": "Add/inject cookies into Burp Cookie Jar",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Add/inject cookies into Burp Cookie Jar",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/tokens": {
+      "get": {
+        "description": "Get token configurations",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get token configurations",
+        "tags": [
+          "Auth"
+        ]
+      },
+      "post": {
+        "description": "Configure token injection headers",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Configure token injection headers",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/bchecks": {
+      "get": {
+        "description": "List imported BChecks",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List imported BChecks",
+        "tags": [
+          "BChecks"
+        ]
+      },
+      "post": {
+        "description": "Import a BCheck from an inline script (requires: script; optional: name, description, enabled)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Import a BCheck from an inline script (requires: script; optional: name, description, enabled)",
+        "tags": [
+          "BChecks"
+        ]
+      }
+    },
+    "/bchecks/import-file": {
+      "post": {
+        "description": "Import a BCheck from a file on the Burp host (requires: file_path; optional: name, description, enabled)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Import a BCheck from a file on the Burp host (requires: file_path; optional: name, description, enabled)",
+        "tags": [
+          "BChecks"
+        ]
+      }
+    },
+    "/bchecks/security-rules": {
+      "get": {
+        "description": "The rules POST /bchecks/validate enforces against a script",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "The rules POST /bchecks/validate enforces against a script",
+        "tags": [
+          "BChecks"
+        ]
+      }
+    },
+    "/bchecks/stats": {
+      "get": {
+        "description": "BCheck counts and status summary",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "BCheck counts and status summary",
+        "tags": [
+          "BChecks"
+        ]
+      }
+    },
+    "/bchecks/templates": {
+      "get": {
+        "description": "Starter BCheck script templates",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Starter BCheck script templates",
+        "tags": [
+          "BChecks"
+        ]
+      }
+    },
+    "/bchecks/validate": {
+      "post": {
+        "description": "Security-validate a BCheck script without importing it (requires: script)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Security-validate a BCheck script without importing it (requires: script)",
+        "tags": [
+          "BChecks"
+        ]
+      }
+    },
+    "/bchecks/{bcheckId}": {
+      "delete": {
+        "description": "Delete a BCheck (requires: bcheckId path parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Delete a BCheck (requires: bcheckId path parameter)",
+        "tags": [
+          "BChecks"
+        ]
+      },
+      "get": {
+        "description": "Get one BCheck's details (requires: bcheckId path parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get one BCheck's details (requires: bcheckId path parameter)",
+        "tags": [
+          "BChecks"
+        ]
+      }
+    },
+    "/collaborator/discover-secrets": {
+      "get": {
+        "description": "Create multiple collaborator clients and extract their secret keys for global access (optional: count parameter, max 20)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create multiple collaborator clients and extract their secret keys for global access (optional: count parameter, max 20)",
+        "tags": [
+          "Collaborator"
+        ]
+      }
+    },
+    "/collaborator/global-interactions": {
+      "get": {
+        "description": "Query interactions across multiple secret keys without needing individual client access (requires: secret_keys parameter as comma-separated list)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Query interactions across multiple secret keys without needing individual client access (requires: secret_keys parameter as comma-separated list)",
+        "tags": [
+          "Collaborator"
+        ]
+      }
+    },
+    "/collaborator/interactions": {
+      "get": {
+        "description": "Retrieve Collaborator interactions. Defaults to the shared API client (payloads minted via POST /collaborator/payloads); pass payload or interaction_id to filter, or client_secret to poll a custom client. Optional: session_tag.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Retrieve Collaborator interactions. Defaults to the shared API client (payloads minted via POST /collaborator/payloads); pass payload or interaction_id to filter, or client_secret to poll a custom client. Optional: session_tag.",
+        "tags": [
+          "Collaborator"
+        ]
+      }
+    },
+    "/collaborator/payloads": {
+      "post": {
+        "description": "Generate API-pollable Collaborator payloads from the shared client (optional: count, options, custom_data, session_tag). Poll results via GET /collaborator/interactions?payload=<payload>.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Generate API-pollable Collaborator payloads from the shared client (optional: count, options, custom_data, session_tag). Poll results via GET /collaborator/interactions?payload=<payload>.",
+        "tags": [
+          "Collaborator"
+        ]
+      }
+    },
+    "/collaborator/payloads/client": {
+      "post": {
+        "description": "Create pollable client with payloads (returns client_secret for API polling; optional: count, options, custom_data, session_tag)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create pollable client with payloads (returns client_secret for API polling; optional: count, options, custom_data, session_tag)",
+        "tags": [
+          "Collaborator"
+        ]
+      }
+    },
+    "/collaborator/payloads/url": {
+      "post": {
+        "description": "Generate single URL as plain text (like 'copy to clipboard' functionality)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Generate single URL as plain text (like 'copy to clipboard' functionality)",
+        "tags": [
+          "Collaborator"
+        ]
+      }
+    },
+    "/collaborator/status": {
+      "get": {
+        "description": "Check Collaborator connectivity and server status",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Check Collaborator connectivity and server status",
+        "tags": [
+          "Collaborator"
+        ]
+      }
+    },
+    "/config": {
+      "get": {
+        "description": "Get burp2api's current runtime configuration",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get burp2api's current runtime configuration",
+        "tags": [
+          "Configuration"
+        ]
+      },
+      "put": {
+        "description": "Update burp2api's runtime configuration (requires: configuration object)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Update burp2api's runtime configuration (requires: configuration object)",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/config/databases": {
+      "get": {
+        "description": "List the per-project SQLite databases in the active database directory (beside the .burp file, or ~/.burp2api/ for temporary projects) with size and last-modified time, and flag which one is active",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List the per-project SQLite databases in the active database directory (beside the .burp file, or ~/.burp2api/ for temporary projects) with size and last-modified time, and flag which one is active",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/config/databases/{name}": {
+      "delete": {
+        "description": "Delete a project's SQLite database file by filename (must end in .db; deleting the active database is refused)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Delete a project's SQLite database file by filename (must end in .db; deleting the active database is refused)",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/config/environment": {
+      "get": {
+        "description": "Show the BURP2API_* environment variables in effect",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Show the BURP2API_* environment variables in effect",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/config/profiles": {
+      "get": {
+        "description": "List configuration profiles (held in memory only; not persisted across extension reloads)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List configuration profiles (held in memory only; not persisted across extension reloads)",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/config/profiles/{profile}": {
+      "delete": {
+        "description": "Delete a configuration profile (requires: profile path parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Delete a configuration profile (requires: profile path parameter)",
+        "tags": [
+          "Configuration"
+        ]
+      },
+      "get": {
+        "description": "Get one configuration profile (requires: profile path parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get one configuration profile (requires: profile path parameter)",
+        "tags": [
+          "Configuration"
+        ]
+      },
+      "put": {
+        "description": "Create or overwrite a configuration profile (requires: profile path parameter and a configuration body)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create or overwrite a configuration profile (requires: profile path parameter and a configuration body)",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/config/reload": {
+      "post": {
+        "description": "Reload configuration from disk",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Reload configuration from disk",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/config/user-config": {
+      "get": {
+        "description": "Export user options or specific sections (ticket #14), wrapping exportUserOptionsAsJson. User options carry the built-in REST API service settings (Settings -> Suite -> REST API) that project options do not. Use sections=user_options.misc.api to capture the keyless REST block. The response is not logged (it can contain an API key if one is configured).",
+        "parameters": [
+          {
+            "description": "Comma-separated user-option section paths, e.g. user_options.misc.api. Omit for the full user configuration.",
+            "in": "query",
+            "name": "sections",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response (wrapped as {\"user_configuration\": {...}})"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Export user options (e.g. the keyless misc.api REST service block)",
+        "tags": [
+          "Configuration"
+        ]
+      },
+      "post": {
+        "description": "Import user options into the running Burp instance (ticket #14), wrapping importUserOptionsFromJson. Symmetric with GET /config/user-config and POST /scope/project-config: apply a captured user-options block (e.g. the keyless misc.api REST service settings). Accepts a raw user-options object or the export-shaped {\"user_configuration\": {...}} wrapper so a GET export round-trips.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "Raw Burp user options, or a {\"user_configuration\": {...}} wrapper.",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Imported (reports sections_imported)"
+          },
+          "400": {
+            "description": "Body is not a non-empty JSON object"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Import user options (e.g. the keyless misc.api REST service block)",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/config/validate": {
+      "post": {
+        "description": "Validate a configuration object without applying it",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Validate a configuration object without applying it",
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
+    "/docs": {
+      "get": {
+        "description": "Swagger UI documentation interface",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Swagger UI documentation interface",
+        "tags": [
+          "Documentation"
+        ]
+      }
+    },
+    "/examples": {
+      "get": {
+        "description": "Interactive request examples for the documented endpoints",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Interactive request examples for the documented endpoints",
+        "tags": [
+          "Documentation"
+        ]
+      }
+    },
+    "/examples/{method}/{path}": {
+      "get": {
+        "description": "Request examples for one endpoint (requires: method and path path parameters, e.g. /examples/POST/proxy/send)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Request examples for one endpoint (requires: method and path path parameters, e.g. /examples/POST/proxy/send)",
+        "tags": [
+          "Documentation"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "Health check. Echoes the bound port, host, and version so a caller can confirm which instance they reached and correct a stale, remembered port. Unauthenticated even when a bearer token is configured.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "healthy" },
+                    "database": { "type": "string", "example": "connected" },
+                    "port": { "type": "integer", "example": 7850 },
+                    "bind": { "type": "string", "example": "127.0.0.1" },
+                    "version": { "type": "string", "example": "1.0.1" },
+                    "timestamp": { "type": "integer", "format": "int64" }
+                  }
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Health check",
+        "tags": [
+          "General"
+        ]
+      }
+    },
+    "/openapi": {
+      "get": {
+        "description": "OpenAPI 3.0 specification",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "OpenAPI 3.0 specification",
+        "tags": [
+          "Documentation"
+        ]
+      }
+    },
+    "/postman": {
+      "get": {
+        "description": "Download Postman collection",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Download Postman collection",
+        "tags": [
+          "Documentation"
+        ]
+      }
+    },
+    "/project": {
+      "get": {
+        "description": "Current project information and database status",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Current project information and database status",
+        "tags": [
+          "General"
+        ]
+      }
+    },
+    "/proxy/analyze/compare": {
+      "post": {
+        "description": "Advanced response variation analysis using Montoya API ResponseVariationsAnalyzer (requires: request_ids array with 2+ IDs)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Advanced response variation analysis using Montoya API ResponseVariationsAnalyzer (requires: request_ids array with 2+ IDs)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/analyze/keywords": {
+      "post": {
+        "description": "Keyword-based security analysis using Montoya API ResponseKeywordsAnalyzer (requires: request_ids, keywords; optional: case_sensitive)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Keyword-based security analysis using Montoya API ResponseKeywordsAnalyzer (requires: request_ids, keywords; optional: case_sensitive)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/comment": {
+      "post": {
+        "description": "Add comments to traffic records (requires: request_id, comment)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "No proxy traffic record has this id"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Add comments to traffic records (requires: request_id, comment)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/comments": {
+      "get": {
+        "description": "Get all commented traffic records (optional: session_tag filter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get all commented traffic records (optional: session_tag filter)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/delete": {
+      "delete": {
+        "description": "Delete traffic records (options: all=true, session_tag=value, start_time/end_time)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Delete traffic records (options: all=true, session_tag=value, start_time/end_time)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/har-export": {
+      "get": {
+        "description": "Export proxy history as HAR file (supports all search filters; limit defaults to 1000)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Export proxy history as HAR file (supports all search filters; limit defaults to 1000)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/history": {
+      "get": {
+        "description": "Get proxy history with optimized scope filtering and performance enhancements (limit, offset, isInScope, notInScope). Rows are returned under a `history` key (NOT the `results` key that /proxy/search uses); each row carries the HTTP response code as `status_code`. Prefer the structured `headers_list`/`response_headers_list` over the flattened `headers`/`response_headers` strings, and use /proxy/history/{id}/raw for byte-exact evidence.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "history": {
+                      "type": "array",
+                      "description": "Captured rows, same per-row shape as /proxy/search results (status_code, headers_list, response_headers_list, body_encoding, ...).",
+                      "items": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get proxy history with optimized scope filtering and performance enhancements (limit, offset, isInScope, notInScope)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/hosts": {
+      "get": {
+        "description": "List every host present in captured traffic with its request count (accepts the /proxy/search filters; the host limit is lifted for this endpoint)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List every host present in captured traffic with its request count (accepts the /proxy/search filters; the host limit is lifted for this endpoint)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/import-history": {
+      "post": {
+        "description": "Import the current Burp project's existing proxy history into burp2api's store (optional: session_tag). Prerequisite for searching pre-existing browser traffic via GET /proxy/search, which only queries this store.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Import the current Burp project's existing proxy history into burp2api's store (optional: session_tag). Prerequisite for searching pre-existing browser traffic via GET /proxy/search, which only queries this store.",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/intercept/rules": {
+      "get": {
+        "description": "List all active proxy interception rules with hit counts and status",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List all active proxy interception rules with hit counts and status",
+        "tags": [
+          "Proxy"
+        ]
+      },
+      "post": {
+        "description": "Create real-time proxy interception rules for dynamic request/response modification (requires: name, type, condition, action)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create real-time proxy interception rules for dynamic request/response modification (requires: name, type, condition, action)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/intercept/rules/{ruleId}/delete": {
+      "post": {
+        "description": "Delete specific proxy interception rule by ID",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Delete specific proxy interception rule by ID",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/intercept/rules/{ruleId}/toggle": {
+      "post": {
+        "description": "Enable or disable specific proxy interception rule (requires: enabled boolean)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Enable or disable specific proxy interception rule (requires: enabled boolean)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/query/list": {
+      "get": {
+        "description": "List all saved queries with optional session filtering (optional: session_tag)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List all saved queries with optional session filtering (optional: session_tag)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/query/load": {
+      "get": {
+        "description": "Load saved query by name (requires: name parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Load saved query by name (requires: name parameter)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/query/save": {
+      "post": {
+        "description": "Save query presets with JSON parameters (requires: name, query_params)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Save query presets with JSON parameters (requires: name, query_params)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/query/{name}": {
+      "delete": {
+        "description": "Delete saved query by name (requires: name path parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Delete saved query by name (requires: name path parameter)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/replay": {
+      "post": {
+        "description": "Replay requests by proxy_traffic.id (the public id space returned by /proxy/search, /proxy/history and /proxy/send). Unresolved ids are reported under 'not_found' rather than silently dropped. Optionally assert intent with 'expect' ({method?, url?}) top-level or per-id ({id, expect}); an id whose resolved row does not match is reported under 'mismatched' and not replayed. See issue #28. (requires: request_ids)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "{ request_ids: [id | {id, expect:{method?,url?}}], expect?: {method?,url?}, session_tag?, cookie_jar? }. Use a proxy_traffic.id; /proxy/search/request-body returns it as 'id' when 'replayable' is true.",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Replayed. May include 'not_found' (unresolved ids) and 'mismatched' (ids that failed an 'expect' assertion)."
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "No supplied id resolved to a proxy_traffic record ('not_found' lists them)"
+          },
+          "409": {
+            "description": "No id both resolved and matched its 'expect' assertion; nothing was replayed ('mismatched' lists them)"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Replay requests by proxy_traffic.id, with optional 'expect' intent assertion (requires: request_ids)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/replay-matched": {
+      "post": {
+        "description": "Replay traffic from search results or specific record IDs (requires: search_params or record_ids)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Replay traffic from search results or specific record IDs (requires: search_params or record_ids)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/replay/lineage/{id}": {
+      "get": {
+        "description": "Track replay genealogy for forensic analysis (requires: id path parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Track replay genealogy for forensic analysis (requires: id path parameter)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/request/{id}/curl": {
+      "get": {
+        "description": "Generate a curl command for a captured request (optional: redact, pretty, shell, metadata). The id is the public proxy_traffic.id returned by /proxy/search and /proxy/history; an internal traffic_meta id (the 'traffic_meta_id' from /proxy/search/request-body or annotation contexts) is also accepted and resolved through its proxy_traffic_id link, so a hit does not have to be reconstructed by hand. The response echoes 'request_id' (the public id the curl was built from), 'requested_id' (the id you passed), and 'resolved_via' ('id' when they match, 'traffic_meta_id' when the internal id was followed). A 404 means the id names no captured request in either id space (#22).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Public proxy_traffic id (as returned by /proxy/search and /proxy/history), or an internal traffic_meta id with a linked capture",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "curl_command": {
+                      "type": "string"
+                    },
+                    "request_id": {
+                      "type": "integer",
+                      "description": "Public proxy_traffic.id the curl was built from; reuse it for /proxy/replay"
+                    },
+                    "requested_id": {
+                      "type": "integer",
+                      "description": "The id supplied in the path"
+                    },
+                    "resolved_via": {
+                      "type": "string",
+                      "enum": ["id", "traffic_meta_id"],
+                      "description": "'id' when the path id was already the public id, 'traffic_meta_id' when an internal id was followed to its linked capture"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request ID (not a number)"
+          },
+          "404": {
+            "description": "No captured request resolves to the id in either the public proxy_traffic space or as a linked internal traffic_meta id"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Generate curl command for request (requires: id; optional: redact, pretty, shell, metadata)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/history/{id}/raw": {
+      "get": {
+        "description": "Byte-exact raw request/response bytes for a stored row (#24). The flattened headers/body columns are a lossy search projection; this serves the exact wire bytes, base64-encoded, so a client decode reproduces what Burp sent/received. A row over max_raw_bytes is omitted (not truncated); a pre-v12 or reconstructed-string row reports present:false with a note.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "proxy_traffic id (as returned by /proxy/search and /proxy/history)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "request_raw_b64": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Base64 of the exact request wire bytes, or null when absent/omitted"
+                    },
+                    "response_raw_b64": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Base64 of the exact response wire bytes, or null when absent/omitted"
+                    },
+                    "request_raw_present": {
+                      "type": "boolean"
+                    },
+                    "response_raw_present": {
+                      "type": "boolean"
+                    },
+                    "request_raw_omitted": {
+                      "type": "boolean",
+                      "description": "True when the request exceeded max_raw_bytes and was omitted rather than truncated"
+                    },
+                    "response_raw_omitted": {
+                      "type": "boolean",
+                      "description": "True when the response exceeded max_raw_bytes and was omitted rather than truncated"
+                    },
+                    "max_raw_bytes": {
+                      "type": "integer",
+                      "description": "Per-message raw storage ceiling (env BURP2API_MAX_RAW_BYTES)"
+                    },
+                    "note": {
+                      "type": "string",
+                      "description": "Present only when neither side has raw bytes, explaining why"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request ID"
+          },
+          "404": {
+            "description": "No traffic record with that ID"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Byte-exact raw request/response bytes for a stored row (base64)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/search": {
+      "get": {
+        "description": "Search burp2api's own captured-traffic store (not Burp's live proxy history). Pre-existing browser/proxy history is not searchable until imported once via POST /proxy/import-history. Filters: url, match, method, host, hosts[], status_code, session_tag, tags, has_tags, has_comments, comment, case_insensitive, start_time, end_time, since, limit, offset. The 'url' filter is a substring match by default; pass match=exact to pin one full URL exactly, or use * and ? wildcards in 'url' for anchored LIKE matching. To locate one specific captured request reliably, tag it (session_tag on send/replay, or POST /proxy/tag) and filter by session_tag rather than by a path substring. The response is always a JSON object with a 'results' array (never a bare array and never an 'items' key); 'pagination' is present only when 'limit' or 'offset' is supplied. Each record includes request_http_version and response_http_version.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "count": {
+                      "description": "Number of results on this page (results.length)",
+                      "type": "integer"
+                    },
+                    "filters": {
+                      "description": "Echoed, normalized query filters",
+                      "type": "object"
+                    },
+                    "pagination": {
+                      "description": "Present only when 'limit' or 'offset' is supplied",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "has_next": {
+                          "type": "boolean"
+                        },
+                        "has_previous": {
+                          "type": "boolean"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "offset": {
+                          "type": "integer"
+                        },
+                        "total_pages": {
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "results": {
+                      "items": {
+                        "properties": {
+                          "body": {
+                            "description": "Request body. UTF-8 text (control characters escaped) when body_encoding is 'utf-8'; Base64 when body_encoding is 'base64'.",
+                            "type": "string"
+                          },
+                          "body_encoding": {
+                            "description": "Discriminator for 'body': 'utf-8' text or 'base64' for binary/non-UTF-8 bodies.",
+                            "enum": [
+                              "utf-8",
+                              "base64"
+                            ],
+                            "type": "string"
+                          },
+                          "body_truncated": {
+                            "description": "True when the request body hit the storage ceiling (max_stored_content_chars) and was trimmed. The store never writes a marker into captured content, so this flag is the only signal.",
+                            "type": "boolean"
+                          },
+                          "connection_time": {
+                            "type": "integer"
+                          },
+                          "content_hash": {
+                            "type": "string"
+                          },
+                          "dns_resolution_time": {
+                            "type": "integer"
+                          },
+                          "headers": {
+                            "description": "Request headers (flattened string, back-compat)",
+                            "type": "string"
+                          },
+                          "headers_list": {
+                            "description": "Structured request headers, ordered, duplicates preserved.",
+                            "items": {
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "host": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "max_stored_content_chars": {
+                            "description": "Per-column storage ceiling in characters, from BURP2API_MAX_STORED_CONTENT_CHARS. Content below it is stored verbatim.",
+                            "type": "integer"
+                          },
+                          "method": {
+                            "type": "string"
+                          },
+                          "request_http_version": {
+                            "type": "string"
+                          },
+                          "request_time": {
+                            "type": "integer"
+                          },
+                          "response_body": {
+                            "description": "Captured response body. UTF-8 text (control characters escaped) when response_body_encoding is 'utf-8'; Base64 when response_body_encoding is 'base64'.",
+                            "type": "string"
+                          },
+                          "response_body_encoding": {
+                            "description": "Discriminator for 'response_body': 'utf-8' text or 'base64' for binary/non-UTF-8 bodies.",
+                            "enum": [
+                              "utf-8",
+                              "base64"
+                            ],
+                            "type": "string"
+                          },
+                          "response_body_truncated": {
+                            "description": "True when the response body hit the storage ceiling (max_stored_content_chars) and was trimmed.",
+                            "type": "boolean"
+                          },
+                          "response_headers": {
+                            "type": "string"
+                          },
+                          "response_headers_list": {
+                            "description": "Structured response headers, ordered, duplicates (e.g. Set-Cookie) preserved.",
+                            "items": {
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "response_http_version": {
+                            "type": "string"
+                          },
+                          "response_time": {
+                            "type": "integer"
+                          },
+                          "session_tag": {
+                            "type": "string"
+                          },
+                          "status_code": {
+                            "type": "integer"
+                          },
+                          "timestamp": {
+                            "type": "integer"
+                          },
+                          "tls_negotiation_time": {
+                            "type": "integer"
+                          },
+                          "total_time": {
+                            "type": "integer"
+                          },
+                          "traffic_source": {
+                            "description": "Originating tool/source of the record",
+                            "enum": [
+                              "PROXY",
+                              "REPEATER",
+                              "INTRUDER",
+                              "SCANNER",
+                              "SEQUENCER",
+                              "COMPARER",
+                              "DECODER",
+                              "IMPORTED",
+                              "MANUAL",
+                              "API"
+                            ],
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "total_count": {
+                      "description": "Total matching rows across all pages",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "results",
+                    "count",
+                    "total_count",
+                    "filters"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Search captured traffic (run POST /proxy/import-history first for pre-existing browser history). Returns an object with a 'results' array; 'pagination' only when limit/offset is set.",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/search/download": {
+      "get": {
+        "description": "Download search results as JSON or CSV (format=json|csv)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Download search results as JSON or CSV (format=json|csv)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/search/metadata": {
+      "get": {
+        "description": "Search tagged and commented records with metadata filters (tags, has_tags, has_comments, comment, session_tag, limit)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Search tagged and commented records with metadata filters (tags, has_tags, has_comments, comment, session_tag, limit)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/search/request-body": {
+      "get": {
+        "description": "FTS5-powered full-text search in request bodies (requires: q query parameter). Each hit's 'id' is the public, replayable proxy_traffic.id (resolved via the exact proxy_traffic_id link recorded at capture time, schema v14 — not a content_hash guess, so a request captured more than once resolves to the exact instance), 'traffic_meta_id' is the internal id (do not replay with it), and 'replayable' is false when the hit has no linked proxy_traffic counterpart (then 'id' is null; reconstruct via /proxy/send). See issue #28.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "FTS5-powered full-text search in request bodies (requires: q query parameter)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/search/response-body": {
+      "get": {
+        "description": "FTS5-powered full-text search in response bodies (requires: q query parameter). Symmetric to /proxy/search/request-body: it matches the trigger-maintained response_index (response headers + body) that previously had no endpoint, so response-body search silently returned nothing (issue #12). Each hit's 'id' is the public, replayable proxy_traffic.id (resolved via the exact proxy_traffic_id link recorded at capture time, schema v14), 'traffic_meta_id' is the internal id (do not replay with it), and 'replayable' is false when the hit has no linked proxy_traffic counterpart (then 'id' is null; reconstruct via /proxy/send).",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "FTS5-powered full-text search in response bodies (requires: q query parameter)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/send": {
+      "post": {
+        "description": "Send HTTP request and capture response (requires: method, url; optional: headers as a JSON object, an array of [name, value] pairs, or newline-separated 'Name: Value' lines, body, session_tag). Set cookie_jar to 'use' (apply and update a session_tag-scoped cookie jar), 'reset' (clear it first, then use), or 'off' (default, stateless) for stateful flows like OIDC/Clerk logins where cookies rotate across calls. Set follow_redirects=true (with optional max_redirects, default 5, max 10) to follow 3xx Location chains carrying the jar each hop.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "body": {
+                    "type": "string"
+                  },
+                  "headers": {
+                    "description": "Request headers. Accepts a JSON object {\"Name\": \"Value\"}, an array of [name, value] pairs, or a legacy CRLF 'Name: Value' string. Duplicate names are last-wins.",
+                    "oneOf": [
+                      {
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      {
+                        "items": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "maxItems": 2,
+                          "minItems": 2,
+                          "type": "array"
+                        },
+                        "type": "array"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "method": {
+                    "type": "string"
+                  },
+                  "session_tag": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "method",
+                  "url"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "request_id": {
+                      "type": "integer"
+                    },
+                    "response": {
+                      "properties": {
+                        "body": {
+                          "description": "Response body. UTF-8 text (control characters escaped) when body_encoding is 'utf-8'; Base64-encoded bytes when body_encoding is 'base64' (binary/non-UTF-8).",
+                          "type": "string"
+                        },
+                        "body_encoding": {
+                          "description": "Discriminator for 'body': 'utf-8' text or 'base64' for binary/non-UTF-8 bodies.",
+                          "enum": [
+                            "utf-8",
+                            "base64"
+                          ],
+                          "type": "string"
+                        },
+                        "headers": {
+                          "description": "Response headers (flattened string, back-compat)",
+                          "type": "string"
+                        },
+                        "headers_list": {
+                          "description": "Structured response headers, ordered, duplicates (e.g. Set-Cookie) preserved. Built from the live response, so byte-exact.",
+                          "items": {
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "http_version": {
+                          "type": "string"
+                        },
+                        "length": {
+                          "description": "Response body length in bytes",
+                          "type": "integer"
+                        },
+                        "status_code": {
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Send HTTP request and capture response (requires: method, url; optional: headers as a JSON object, an array of [name, value] pairs, or newline-separated 'Name: Value' lines, body, session_tag). Set cookie_jar to 'use' (apply and update a session_tag-scoped cookie jar), 'reset' (clear it first, then use), or 'off' (default, stateless) for stateful flows like OIDC/Clerk logins where cookies rotate across calls. Set follow_redirects=true (with optional max_redirects, default 5, max 10) to follow 3xx Location chains carrying the jar each hop.",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/stats": {
+      "get": {
+        "description": "Get traffic statistics grouped by host, method, status code, and session tag. Supports host_limit (custom limit), all_hosts=true (remove limit), hosts[] (batch filtering), since (incremental updates).",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get traffic statistics grouped by host, method, status code, and session tag. Supports host_limit (custom limit), all_hosts=true (remove limit), hosts[] (batch filtering), since (incremental updates).",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/tag": {
+      "post": {
+        "description": "Tag traffic records with analyst labels (requires: request_id, tags)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "No proxy traffic record has this id"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Tag traffic records with analyst labels (requires: request_id, tags)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/tags": {
+      "get": {
+        "description": "Get all tagged traffic records (optional: session_tag filter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get all tagged traffic records (optional: session_tag filter)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/timeline": {
+      "get": {
+        "description": "Get traffic timeline grouped by time intervals (interval=minute|hour|day; supports all search filters)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get traffic timeline grouped by time intervals (interval=minute|hour|day; supports all search filters)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/proxy/upload": {
+      "post": {
+        "description": "Upload HAR files or raw HTTP logs for storage (supports JSON HAR format and plain text HTTP logs)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Upload HAR files or raw HTTP logs for storage (supports JSON HAR format and plain text HTTP logs)",
+        "tags": [
+          "Proxy"
+        ]
+      }
+    },
+    "/scanner/crawl": {
+      "post": {
+        "description": "Start a crawl from seed URLs (requires: urls array or single url; optional: session_tag and crawl configuration fields)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Start a crawl from seed URLs (requires: urls array or single url; optional: session_tag and crawl configuration fields)",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/enhanced-scan": {
+      "post": {
+        "description": "Start a scan from a structured ScanRequest body (url or urls, scan_type, audit_config, scan_optimization, crawl_configuration, authentication, scope_restrictions, custom_headers, session_tag)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Start a scan from a structured ScanRequest body (url or urls, scan_type, audit_config, scan_optimization, crawl_configuration, authentication, scope_restrictions, custom_headers, session_tag)",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/enhanced-scan/configurations": {
+      "get": {
+        "description": "List the audit configurations, scan types, optimization strategies, insertion point types, and authentication types accepted by /scanner/enhanced-scan",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List the audit configurations, scan types, optimization strategies, insertion point types, and authentication types accepted by /scanner/enhanced-scan",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/enhanced-scan/presets": {
+      "get": {
+        "description": "List ready-made enhanced-scan presets (quick, thorough, discovery)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List ready-made enhanced-scan presets (quick, thorough, discovery)",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/enhanced-scan/validate": {
+      "post": {
+        "description": "Validate a ScanRequest body without starting it; returns valid, estimated_targets, and estimated_duration_minutes",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Validate a ScanRequest body without starting it; returns valid, estimated_targets, and estimated_duration_minutes",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/issues": {
+      "get": {
+        "description": "Get scanner issues with filtering (severity, confidence, name, host, url, case_insensitive, limit, offset)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get scanner issues with filtering (severity, confidence, name, host, url, case_insensitive, limit, offset)",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/queue": {
+      "get": {
+        "description": "Get scanner queue status (limited by Burp API - shows available operations)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get scanner queue status (limited by Burp API - shows available operations)",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/scan-request": {
+      "post": {
+        "description": "Scan raw HTTP request (requires: method, url; optional: headers, body, audit_config, session_tag). Ticket #13: scope preflight (auto_scope) plus an optional Burp built-in REST API backend for named scan_configurations and a resource_pool the Montoya API cannot set.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "audit_config": {
+                    "type": "string"
+                  },
+                  "auto_scope": {
+                    "default": true,
+                    "description": "Default true: add the target to Burp scope if missing (an out-of-scope audit is silently accepted but sends zero payload variations). false rejects an out-of-scope target with HTTP 409.",
+                    "type": "boolean"
+                  },
+                  "backend": {
+                    "default": "auto",
+                    "description": "auto (default) prefers Burp's built-in REST API with the default audit config (BURP2API_SCAN_CONFIG=b2a-light-fuzz) + resource pool, and falls back to a Montoya audit when REST is unreachable or the request is non-GET/has a body (REST scans by URL and can't replay a body). montoya forces an exact-request Montoya audit; rest forces REST. Extension checks (param-fuzzer) run on either backend when the audit config includes them.",
+                    "enum": [
+                      "auto",
+                      "montoya",
+                      "rest"
+                    ],
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "string"
+                  },
+                  "headers": {
+                    "description": "Request headers. Accepts a JSON object {\"Name\": \"Value\"}, an array of [name, value] pairs, or a legacy CRLF 'Name: Value' string. Duplicate names are last-wins.",
+                    "oneOf": [
+                      {
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      {
+                        "items": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "maxItems": 2,
+                          "minItems": 2,
+                          "type": "array"
+                        },
+                        "type": "array"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "method": {
+                    "type": "string"
+                  },
+                  "resource_pool": {
+                    "description": "REST backend only. Omitted -> BURP2API_RESOURCE_POOL (default \"Default resource pool\", preset to 1 concurrent / 1000ms by the project template). Send \"\" to run without a named pool. The Montoya fallback path is throttled by the same project pool (POST /scope/project-config).",
+                    "type": "string"
+                  },
+                  "scan_configurations": {
+                    "description": "REST backend only. Omitted -> BURP2API_SCAN_CONFIG (default b2a-light-fuzz, which keeps param-fuzzer). Explicit [] -> Burp's default config. NOTE: the built-in \"Audit checks - light/medium active\" presets EXCLUDE extension-registered checks (param-fuzzer); b2a-light-fuzz and the default config include them.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "session_tag": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "method",
+                  "url"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "409": {
+            "description": "Out of scope with auto_scope=false \u2014 scan would send zero payload variations"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Scan raw HTTP request (requires: method, url; optional: headers, body, audit_config, session_tag). Ticket #13: scope preflight (auto_scope) plus an optional Burp built-in REST API backend for named scan_configurations and a resource_pool the Montoya API cannot set.",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/scan-url-list": {
+      "post": {
+        "description": "Scan multiple URLs (requires: urls or url; optional: method, audit_config, session_tag, auto_scope). Ticket #13: out-of-scope URLs are added to scope (auto_scope=true, default) or reported as skipped_out_of_scope (auto_scope=false).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "audit_config": {
+                    "type": "string"
+                  },
+                  "auto_scope": {
+                    "default": true,
+                    "description": "false reports out-of-scope URLs as skipped_out_of_scope instead of adding them.",
+                    "type": "boolean"
+                  },
+                  "method": {
+                    "default": "GET",
+                    "type": "string"
+                  },
+                  "session_tag": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "urls": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Scan multiple URLs (requires: urls or url; optional: method, audit_config, session_tag, auto_scope). Ticket #13: out-of-scope URLs are added to scope (auto_scope=true, default) or reported as skipped_out_of_scope (auto_scope=false).",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/tasks": {
+      "get": {
+        "description": "List scan tasks with live, derived status (ticket #13). Optional filters: status, task_type (AUDIT|CRAWL|CRAWL_AND_AUDIT), session_tag, limit (1-500, default 50), offset.",
+        "parameters": [
+          {
+            "description": "Filter by derived state (PENDING|RUNNING|DONE|PAUSED|CANCELLED|ERRORED).",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "AUDIT, CRAWL, or CRAWL_AND_AUDIT.",
+            "in": "query",
+            "name": "task_type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by session tag.",
+            "in": "query",
+            "name": "session_tag",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "1-500 (default 50).",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Pagination offset.",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "503": {
+            "description": "ScanTaskManager not available"
+          }
+        },
+        "summary": "List scan tasks with live status",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scanner/tasks/{id}": {
+      "delete": {
+        "description": "Cancel a running scan task via Burp's task delete() (ticket #13). Montoya tasks only; the REST backend has no cancel endpoint.",
+        "parameters": [
+          {
+            "description": "Task id. A rest_-prefixed id proxies Burp's built-in REST API scan_status/scan_metrics.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Cancelled"
+          },
+          "400": {
+            "description": "Task could not be cancelled (already finished/failed)"
+          },
+          "404": {
+            "description": "Task not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "503": {
+            "description": "ScanTaskManager not available"
+          }
+        },
+        "summary": "Cancel a scan task",
+        "tags": [
+          "Scanner"
+        ]
+      },
+      "get": {
+        "description": "Get a scan task's live status (ticket #13). Montoya tasks derive PENDING/RUNNING/DONE/PAUSED/CANCELLED/ERRORED from the live audit and expose audit_traffic_started, stalled, elapsed_ms, request_count, error_count, insertion_points, issues_found. rest_-prefixed tasks proxy Burp's authoritative scan_status/scan_metrics under the same vocabulary.",
+        "parameters": [
+          {
+            "description": "Task id. A rest_-prefixed id proxies Burp's built-in REST API scan_status/scan_metrics.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "404": {
+            "description": "Task not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "503": {
+            "description": "ScanTaskManager not available"
+          }
+        },
+        "summary": "Get scan task live status",
+        "tags": [
+          "Scanner"
+        ]
+      }
+    },
+    "/scope/check": {
+      "get": {
+        "description": "Check if URL is in scope (optimized with caching) (requires: url parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Check if URL is in scope (optimized with caching) (requires: url parameter)",
+        "tags": [
+          "Scope"
+        ]
+      }
+    },
+    "/scope/current": {
+      "get": {
+        "description": "Get current scope information with enhanced project configuration access",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get current scope information with enhanced project configuration access",
+        "tags": [
+          "Scope"
+        ]
+      }
+    },
+    "/scope/exclude": {
+      "post": {
+        "description": "Exclude URLs from scope (requires: url or urls; supports single URL or array)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Exclude URLs from scope (requires: url or urls; supports single URL or array)",
+        "tags": [
+          "Scope"
+        ]
+      }
+    },
+    "/scope/import": {
+      "post": {
+        "description": "Import URLs to scope (supports JSON array or plain text; options: type=include|exclude, session_tag)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Import URLs to scope (supports JSON array or plain text; options: type=include|exclude, session_tag)",
+        "tags": [
+          "Scope"
+        ]
+      }
+    },
+    "/scope/project-config": {
+      "get": {
+        "description": "Export full project configuration or specific sections (optional: sections=target.scope,project_options.connections)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Export full project configuration or specific sections (optional: sections=target.scope,project_options.connections)",
+        "tags": [
+          "Scope"
+        ]
+      },
+      "post": {
+        "description": "Import project options into the current Burp project (ticket #13 Phase 3), wrapping importProjectOptionsFromJson. Apply a resource-pool template (concurrency + throttle) to run audits on a memory-constrained JVM without the REST backend. Accepts a raw project-options object or the export-shaped {\"project_configuration\": {...}} wrapper so a GET export round-trips.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "Raw Burp project options, or a {\"project_configuration\": {...}} wrapper.",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Imported (reports sections_imported)"
+          },
+          "400": {
+            "description": "Body is not a non-empty JSON object"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Import project options (e.g. a resource-pool throttle template)",
+        "tags": [
+          "Scope"
+        ]
+      }
+    },
+    "/scope/reset": {
+      "post": {
+        "description": "Reset scope by clearing all include/exclude rules (reads current rules from project config and uses Montoya API to clear them)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Reset scope by clearing all include/exclude rules (reads current rules from project config and uses Montoya API to clear them)",
+        "tags": [
+          "Scope"
+        ]
+      }
+    },
+    "/session/cookies": {
+      "delete": {
+        "description": "Reset (clear) the session-scoped cookie jar for a session_tag, e.g. before a fresh login.",
+        "parameters": [
+          {
+            "description": "Session tag whose jar to clear. Defaults to the current session tag.",
+            "in": "query",
+            "name": "session_tag",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Reset the session-scoped cookie jar for a session_tag",
+        "tags": [
+          "Session"
+        ]
+      },
+      "get": {
+        "description": "Inspect the session-scoped cookie jar used by /proxy/send and /proxy/replay for a session_tag. The jar is last-write-wins per (name, domain, path), so rotating tokens reflect their freshest value.",
+        "parameters": [
+          {
+            "description": "Session tag whose jar to inspect. Defaults to the current session tag.",
+            "in": "query",
+            "name": "session_tag",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Inspect the session-scoped cookie jar for a session_tag",
+        "tags": [
+          "Session"
+        ]
+      },
+      "post": {
+        "description": "Seed the session cookie jar from cookies reconstructed from captured proxy traffic for seed_host, so an existing authenticated session can be reused without re-running the login flow. Requires seed_host; optional session_tag.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Seed the session cookie jar from captured proxy traffic",
+        "tags": [
+          "Session"
+        ]
+      }
+    },
+    "/session/current": {
+      "get": {
+        "description": "Get current session tag with statistics and usage information",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get current session tag with statistics and usage information",
+        "tags": [
+          "Session"
+        ]
+      }
+    },
+    "/session/help": {
+      "get": {
+        "description": "Complete documentation for session management API",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Complete documentation for session management API",
+        "tags": [
+          "Session"
+        ]
+      }
+    },
+    "/session/history": {
+      "get": {
+        "description": "Get complete session history and statistics",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get complete session history and statistics",
+        "tags": [
+          "Session"
+        ]
+      }
+    },
+    "/session/new": {
+      "post": {
+        "description": "Generate a new session tag and apply it (optional: prefix parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Generate a new session tag and apply it (optional: prefix parameter)",
+        "tags": [
+          "Session"
+        ]
+      }
+    },
+    "/session/tag": {
+      "post": {
+        "description": "Update session tag with auto-generation support (auto-generates if empty)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Update session tag with auto-generation support (auto-generates if empty)",
+        "tags": [
+          "Session"
+        ]
+      }
+    },
+    "/version": {
+      "get": {
+        "description": "Version information. Reports the extension api_version and the build's target schema_version (a capability signal independent of any open database; byte-exact raw capture requires schema_version >= 12), plus the running Burp version.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "api_version": { "type": "string", "example": "1.1.0" },
+                    "schema_version": { "type": "integer", "example": 12, "description": "Schema version this build targets; >= 12 means byte-exact raw request/response capture (GET /proxy/history/{id}/raw) is available." },
+                    "burp_version": { "type": "object", "description": "Running Burp Suite version: name, version_string, build_number, edition." }
+                  }
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Version information",
+        "tags": [
+          "General"
+        ]
+      }
+    },
+    "/ws/stats": {
+      "get": {
+        "description": "WebSocket connection statistics and performance metrics",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "WebSocket connection statistics and performance metrics",
+        "tags": [
+          "General"
+        ]
+      }
+    },
+    "/ws/stream": {
+      "ws": {
+        "description": "Real-time WebSocket traffic streaming (query: session_tag; events: traffic.new, traffic.tagged, stats.updated, etc.)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Real-time WebSocket traffic streaming (query: session_tag; events: traffic.new, traffic.tagged, stats.updated, etc.)",
+        "tags": [
+          "General"
+        ]
+      }
+    },
+    "/ws/test": {
+      "get": {
+        "description": "Test WebSocket broadcasting functionality (optional: session_tag parameter)",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Test WebSocket broadcasting functionality (optional: session_tag parameter)",
+        "tags": [
+          "General"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Local Burp API Server",
+      "url": "http://localhost:7850"
+    }
+  ],
+  "tags": [
+    {
+      "description": "General API information",
+      "name": "General"
+    },
+    {
+      "description": "Proxy traffic management with advanced analytics, response analysis, and real-time interception (Montoya API 2025.8+)",
+      "name": "Proxy"
+    },
+    {
+      "description": "Scope management with intelligent caching",
+      "name": "Scope"
+    },
+    {
+      "description": "Scanner and vulnerability management",
+      "name": "Scanner"
+    },
+    {
+      "description": "Authentication and session management",
+      "name": "Auth"
+    },
+    {
+      "description": "Session tag management and auto-generation",
+      "name": "Session"
+    },
+    {
+      "description": "Collaborator integration for out-of-band testing",
+      "name": "Collaborator"
+    },
+    {
+      "description": "BCheck import, validation, and management",
+      "name": "BChecks"
+    },
+    {
+      "description": "burp2api extension configuration, profiles, and per-project databases",
+      "name": "Configuration"
+    },
+    {
+      "description": "API documentation and collections",
+      "name": "Documentation"
+    }
+  ]
+}
